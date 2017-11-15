@@ -6699,6 +6699,7 @@ BaseTheme.DEFAULTS = (0, _extend2.default)(true, {}, _theme2.default.DEFAULTS, {
                   _this3.quill.setSelection(range.index + 1, _emitter2.default.sources.SILENT);
                   fileInput.value = "";
                 };
+		if(fileInput.files[0].size > 3888338) return false;
                 reader.readAsDataURL(fileInput.files[0]);
               }
             });
@@ -10664,12 +10665,10 @@ var Video = function (_BlockEmbed) {
   }], [{
     key: 'create',
     value: function create(value) {
-/*Creation*/
-console.debug(value);
       var node = _get(Video.__proto__ || Object.getPrototypeOf(Video), 'create', this).call(this, value);
-      node.setAttribute('frameborder', '0');
-      node.setAttribute('allowfullscreen', true);
-      node.setAttribute('src', value);
+      if (typeof value === 'string') {
+        node.setAttribute('src', this.sanitize(value));
+      }
       return node;
     }
   }, {
@@ -10683,9 +10682,15 @@ console.debug(value);
       }, {});
     }
   }, {
+    key: 'match',
+    value: function match(url) {
+      return (/\.(mpg|mp4|3gp)$/.test(url) || /^data:video\/.+;base64/.test(url)
+      );
+    }
+  }, {
     key: 'sanitize',
     value: function sanitize(url) {
-      return _link2.default.sanitize(url);
+      return (0, _link.sanitize)(url, ['http', 'https', 'data']) ? url : '//:0';
     }
   }, {
     key: 'value',
@@ -10699,7 +10704,7 @@ console.debug(value);
 
 Video.blotName = 'video';
 Video.className = 'ql-video';
-Video.tagName = 'video';
+Video.tagName = 'VIDEO';
 
 exports.default = Video;
 
